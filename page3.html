@@ -15,31 +15,31 @@
         <a href="page3.html" style="color:#ffcc00;">Контакты</a>
     </div>
 
-    <form id="contactForm" action="index.html">
+    <form id="contactForm">
         <div class="form-group">
             <label>Фамилия</label>
-            <input type="text" name="surname" required>
+            <input type="text" id="surname" name="surname" required>
         </div>
         <div class="form-group">
             <label>Имя</label>
-            <input type="text" name="name" required>
+            <input type="text" id="name" name="name" required>
         </div>
         <div class="form-group">
             <label>Отчество</label>
-            <input type="text" name="patronymic">
+            <input type="text" id="patronymic" name="patronymic">
         </div>
 
         <fieldset>
             <legend>Пол</legend>
             <div class="radio-group">
-                <label><input type="radio" name="gender" value="male"> Мужской</label>
-                <label><input type="radio" name="gender" value="female"> Женский</label>
+                <label><input type="radio" name="gender" value="Мужской"> Мужской</label>
+                <label><input type="radio" name="gender" value="Женский"> Женский</label>
             </div>
         </fieldset>
 
         <div class="form-group">
             <label>Форма обучения</label>
-            <select name="department">
+            <select id="department" name="department">
                 <option>Очное</option>
                 <option>Заочное</option>
             </select>
@@ -48,29 +48,141 @@
         <fieldset>
             <legend>Сданные зачёты</legend>
             <div class="checkbox-group">
-                <label><input type="checkbox" name="zachet1"> Математика</label>
-                <label><input type="checkbox" name="zachet2"> Физика</label>
-                <label><input type="checkbox" name="zachet3"> Программирование</label>
+                <label><input type="checkbox" id="zachet1" value="Математика"> Математика</label>
+                <label><input type="checkbox" id="zachet2" value="Физика"> Физика</label>
+                <label><input type="checkbox" id="zachet3" value="Программирование"> Программирование</label>
             </div>
         </fieldset>
 
         <div class="grade-select">
             <p><strong>Оценки по предметам</strong></p>
-            <label>Математика: <select name="math_grade"><option>2</option><option>3</option><option>4</option><option>5</option></select></label><br>
-            <label>Физика: <select name="physics_grade"><option>2</option><option>3</option><option>4</option><option>5</option></select></label><br>
-            <label>Программирование: <select name="prog_grade"><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+            <label>Математика: 
+                <select id="math_grade">
+                    <option>2</option><option>3</option><option>4</option><option>5</option>
+                </select>
+            </label><br>
+            <label>Физика: 
+                <select id="physics_grade">
+                    <option>2</option><option>3</option><option>4</option><option>5</option>
+                </select>
+            </label><br>
+            <label>Программирование: 
+                <select id="prog_grade">
+                    <option>2</option><option>3</option><option>4</option><option>5</option>
+                </select>
+            </label>
         </div>
 
         <button class="submit-btn" type="submit">Отправить</button>
         <button class="reset-btn" type="reset">Очистить</button>
     </form>
 
+    <div id="statusMessage" style="margin-top: 20px; padding: 10px; border-radius: 10px; display: none;"></div>
+
     <a class="back-link" href="index.html">← На главную</a>
 </div>
 
 <script>
-    document.getElementById('contactForm').addEventListener('submit', function() {
-        alert('Спасибо! Форма отправлена.');
+    // ========== ВСТАВЬТЕ СВОИ ДАННЫЕ ЗДЕСЬ ==========
+    const BOT_TOKEN = '8793992470:AAEV9w7bfX_S8GT4R9lZHT485SYJGHr1YUA';  // замените на токен от @BotFather
+    const CHAT_ID = '818159509';       // замените на ID от @userinfobot
+    // =============================================
+
+    const form = document.getElementById('contactForm');
+    const statusMessage = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault(); // не перезагружаем страницу
+
+        // Собираем данные из формы
+        const surname = document.getElementById('surname').value;
+        const name = document.getElementById('name').value;
+        const patronymic = document.getElementById('patronymic').value;
+        
+        const gender = document.querySelector('input[name="gender"]:checked');
+        const genderValue = gender ? gender.value : 'Не указан';
+        
+        const department = document.getElementById('department').value;
+        
+        // Собираем зачёты
+        let zachets = [];
+        if (document.getElementById('zachet1').checked) zachets.push('Математика');
+        if (document.getElementById('zachet2').checked) zachets.push('Физика');
+        if (document.getElementById('zachet3').checked) zachets.push('Программирование');
+        const zachetText = zachets.length > 0 ? zachets.join(', ') : 'Нет сданных зачётов';
+        
+        const mathGrade = document.getElementById('math_grade').value;
+        const physicsGrade = document.getElementById('physics_grade').value;
+        const progGrade = document.getElementById('prog_grade').value;
+        
+        // Формируем красивое сообщение для Telegram
+        const message = `📋 НОВАЯ ЗАЯВКА С САЙТА
+        
+👤 ФИО: ${surname} ${name} ${patronymic}
+⚥ Пол: ${genderValue}
+🎓 Отделение: ${department}
+✅ Зачёты сданы: ${zachetText}
+📊 Оценки:
+   • Математика: ${mathGrade}
+   • Физика: ${physicsGrade}
+   • Программирование: ${progGrade}
+🕐 Время: ${new Date().toLocaleString()}`;
+
+        // Показываем статус "Отправка..."
+        statusMessage.style.display = 'block';
+        statusMessage.style.backgroundColor = 'rgba(255,204,0,0.2)';
+        statusMessage.style.color = '#ffcc00';
+        statusMessage.innerText = 'Отправка данных...';
+
+        try {
+            // Отправляем в Telegram
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.ok) {
+                // Успешно
+                statusMessage.style.backgroundColor = 'rgba(0,255,0,0.2)';
+                statusMessage.style.color = '#00ff00';
+                statusMessage.innerText = '✅ Данные успешно отправлены! Сейчас вы будете перенаправлены на главную.';
+                
+                // Сохраняем в localStorage на всякий случай
+                const formData = {
+                    surname, name, patronymic, genderValue, department, zachets, mathGrade, physicsGrade, progGrade
+                };
+                localStorage.setItem('anketaData', JSON.stringify(formData));
+                
+                // Через 2 секунды переходим на главную
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            } else {
+                throw new Error(result.description);
+            }
+        } catch (error) {
+            // Ошибка
+            statusMessage.style.backgroundColor = 'rgba(255,0,0,0.2)';
+            statusMessage.style.color = '#ff6666';
+            statusMessage.innerText = '❌ Ошибка отправки. Проверьте токен и Chat ID. Данные сохранены локально.';
+            
+            // Всё равно сохраняем данные локально
+            const formData = {
+                surname, name, patronymic, genderValue, department, zachets, mathGrade, physicsGrade, progGrade
+            };
+            localStorage.setItem('anketaData', JSON.stringify(formData));
+            console.error('Ошибка отправки в Telegram:', error);
+        }
     });
 </script>
 </body>
