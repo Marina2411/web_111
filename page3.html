@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Техно Мир | Контакты</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+<div class="form-container">
+    <h1>Свяжитесь с нами</h1>
+
+    <div class="nav-links" style="display: flex; justify-content: center; gap: 30px; margin-bottom: 30px;">
+        <a href="index.html" style="color:#ffcc00;">Главная</a>
+        <a href="page2.html" style="color:#ffcc00;">Галерея</a>
+        <a href="page3.html" style="color:#ffcc00;">Контакты</a>
+    </div>
+
+    <form id="contactForm" action="index.html">
+        <div class="form-group">
+            <label>Фамилия</label>
+            <input type="text" name="surname" required>
+        </div>
+        <div class="form-group">
+            <label>Имя</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label>Отчество</label>
+            <input type="text" name="patronymic">
+        </div>
+
+        <fieldset>
+            <legend>Пол</legend>
+            <div class="radio-group">
+                <label><input type="radio" name="gender" value="male"> Мужской</label>
+                <label><input type="radio" name="gender" value="female"> Женский</label>
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            <label>Форма обучения</label>
+            <select name="department">
+                <option>Очное</option>
+                <option>Заочное</option>
+            </select>
+        </div>
+
+        <fieldset>
+            <legend>Сданные зачёты</legend>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="zachet1"> Математика</label>
+                <label><input type="checkbox" name="zachet2"> Физика</label>
+                <label><input type="checkbox" name="zachet3"> Программирование</label>
+            </div>
+        </fieldset>
+
+        <div class="grade-select">
+            <p><strong>Оценки по предметам</strong></p>
+            <label>Математика: <select name="math_grade"><option>2</option><option>3</option><option>4</option><option>5</option></select></label><br>
+            <label>Физика: <select name="physics_grade"><option>2</option><option>3</option><option>4</option><option>5</option></select></label><br>
+            <label>Программирование: <select name="prog_grade"><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+        </div>
+
+        <button class="submit-btn" type="submit">Отправить</button>
+        <button class="reset-btn" type="reset">Очистить</button>
+    </form>
+
+    <a class="back-link" href="index.html">← На главную</a>
+</div>
+
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function() {
+        alert('Спасибо! Форма отправлена.');
+    });
+</script>
+</body>
+</html>
