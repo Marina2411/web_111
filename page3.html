@@ -10,23 +10,23 @@
     <h1>Свяжитесь с нами</h1>
 
     <div class="nav-links" style="display: flex; justify-content: center; gap: 30px; margin-bottom: 30px;">
-        <a href="index.html" style="color:#ffcc00;">Главная</a>
-        <a href="page2.html" style="color:#ffcc00;">Галерея</a>
-        <a href="page3.html" style="color:#ffcc00;">Контакты</a>
+        <a href="index.html">Главная</a>
+        <a href="page2.html">Галерея</a>
+        <a href="page3.html">Контакты</a>
     </div>
 
     <form id="contactForm">
         <div class="form-group">
             <label>Фамилия</label>
-            <input type="text" id="surname" name="surname" required>
+            <input type="text" name="surname" id="surname" required>
         </div>
         <div class="form-group">
             <label>Имя</label>
-            <input type="text" id="name" name="name" required>
+            <input type="text" name="name" id="name" required>
         </div>
         <div class="form-group">
             <label>Отчество</label>
-            <input type="text" id="patronymic" name="patronymic">
+            <input type="text" name="patronymic" id="patronymic">
         </div>
 
         <fieldset>
@@ -39,7 +39,7 @@
 
         <div class="form-group">
             <label>Форма обучения</label>
-            <select id="department" name="department">
+            <select name="department" id="department">
                 <option>Очное</option>
                 <option>Заочное</option>
             </select>
@@ -48,141 +48,307 @@
         <fieldset>
             <legend>Сданные зачёты</legend>
             <div class="checkbox-group">
-                <label><input type="checkbox" id="zachet1" value="Математика"> Математика</label>
-                <label><input type="checkbox" id="zachet2" value="Физика"> Физика</label>
-                <label><input type="checkbox" id="zachet3" value="Программирование"> Программирование</label>
+                <label><input type="checkbox" name="zachet1" value="Математика"> Математика</label>
+                <label><input type="checkbox" name="zachet2" value="Физика"> Физика</label>
+                <label><input type="checkbox" name="zachet3" value="Программирование"> Программирование</label>
             </div>
         </fieldset>
 
         <div class="grade-select">
             <p><strong>Оценки по предметам</strong></p>
             <label>Математика: 
-                <select id="math_grade">
-                    <option>2</option><option>3</option><option>4</option><option>5</option>
+                <select name="math_grade" id="math_grade">
+                    <option>2</option><option>3</option><option>4</option><option selected>5</option>
                 </select>
             </label><br>
             <label>Физика: 
-                <select id="physics_grade">
-                    <option>2</option><option>3</option><option>4</option><option>5</option>
+                <select name="physics_grade" id="physics_grade">
+                    <option>2</option><option>3</option><option>4</option><option selected>5</option>
                 </select>
             </label><br>
             <label>Программирование: 
-                <select id="prog_grade">
-                    <option>2</option><option>3</option><option>4</option><option>5</option>
+                <select name="prog_grade" id="prog_grade">
+                    <option>2</option><option>3</option><option>4</option><option selected>5</option>
                 </select>
             </label>
         </div>
 
-        <button class="submit-btn" type="submit">Отправить</button>
+        <div class="form-group">
+            <label>Ваш комментарий</label>
+            <textarea name="comment" id="comment" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: none; font-family: inherit;" placeholder="Напишите ваш отзыв или пожелание..."></textarea>
+        </div>
+
+        <button class="submit-btn" type="button" id="submitBtn">Отправить анкету</button>
         <button class="reset-btn" type="reset">Очистить</button>
     </form>
-
-    <div id="statusMessage" style="margin-top: 20px; padding: 10px; border-radius: 10px; display: none;"></div>
 
     <a class="back-link" href="index.html">← На главную</a>
 </div>
 
 <script>
-    // ========== ВСТАВЬТЕ СВОИ ДАННЫЕ ЗДЕСЬ ==========
-    const BOT_TOKEN = '8793992470:AAGuIhgSKW1LAxZdLRZVOlxdZEXggow5MWc';  // замените на токен от @BotFather
-    const CHAT_ID = '818159509';       // замените на ID от @userinfobot
-    // =============================================
+    // ВАШИ ДАННЫЕ ДЛЯ TELEGRAM
+    const BOT_TOKEN = '8793992470:AAGuIhgSKW1LAxZdLRZVOlxdZEXggow5MWc';
+    const CHAT_ID = '818159509';
+    
+    const submitBtn = document.getElementById('submitBtn');
 
-    const form = document.getElementById('contactForm');
-    const statusMessage = document.getElementById('statusMessage');
-
-    form.addEventListener('submit', async function(event) {
-        event.preventDefault(); // не перезагружаем страницу
-
-        // Собираем данные из формы
-        const surname = document.getElementById('surname').value;
-        const name = document.getElementById('name').value;
-        const patronymic = document.getElementById('patronymic').value;
-        
-        const gender = document.querySelector('input[name="gender"]:checked');
-        const genderValue = gender ? gender.value : 'Не указан';
-        
-        const department = document.getElementById('department').value;
-        
-        // Собираем зачёты
-        let zachets = [];
-        if (document.getElementById('zachet1').checked) zachets.push('Математика');
-        if (document.getElementById('zachet2').checked) zachets.push('Физика');
-        if (document.getElementById('zachet3').checked) zachets.push('Программирование');
-        const zachetText = zachets.length > 0 ? zachets.join(', ') : 'Нет сданных зачётов';
-        
-        const mathGrade = document.getElementById('math_grade').value;
-        const physicsGrade = document.getElementById('physics_grade').value;
-        const progGrade = document.getElementById('prog_grade').value;
-        
-        // Формируем красивое сообщение для Telegram
-        const message = `📋 НОВАЯ ЗАЯВКА С САЙТА
-        
-👤 ФИО: ${surname} ${name} ${patronymic}
-⚥ Пол: ${genderValue}
-🎓 Отделение: ${department}
-✅ Зачёты сданы: ${zachetText}
-📊 Оценки:
-   • Математика: ${mathGrade}
-   • Физика: ${physicsGrade}
-   • Программирование: ${progGrade}
-🕐 Время: ${new Date().toLocaleString()}`;
-
-        // Показываем статус "Отправка..."
-        statusMessage.style.display = 'block';
-        statusMessage.style.backgroundColor = 'rgba(255,204,0,0.2)';
-        statusMessage.style.color = '#ffcc00';
-        statusMessage.innerText = 'Отправка данных...';
-
+    async function sendToTelegram(message) {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
         try {
-            // Отправляем в Telegram
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
             const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chat_id: CHAT_ID,
                     text: message,
                     parse_mode: 'HTML'
                 })
             });
-            
             const result = await response.json();
-            
-            if (result.ok) {
-                // Успешно
-                statusMessage.style.backgroundColor = 'rgba(0,255,0,0.2)';
-                statusMessage.style.color = '#00ff00';
-                statusMessage.innerText = '✅ Данные успешно отправлены! Сейчас вы будете перенаправлены на главную.';
-                
-                // Сохраняем в localStorage на всякий случай
-                const formData = {
-                    surname, name, patronymic, genderValue, department, zachets, mathGrade, physicsGrade, progGrade
-                };
-                localStorage.setItem('anketaData', JSON.stringify(formData));
-                
-                // Через 2 секунды переходим на главную
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-            } else {
-                throw new Error(result.description);
-            }
+            return result.ok === true;
         } catch (error) {
-            // Ошибка
-            statusMessage.style.backgroundColor = 'rgba(255,0,0,0.2)';
-            statusMessage.style.color = '#ff6666';
-            statusMessage.innerText = '❌ Ошибка отправки. Проверьте токен и Chat ID. Данные сохранены локально.';
-            
-            // Всё равно сохраняем данные локально
-            const formData = {
-                surname, name, patronymic, genderValue, department, zachets, mathGrade, physicsGrade, progGrade
-            };
-            localStorage.setItem('anketaData', JSON.stringify(formData));
-            console.error('Ошибка отправки в Telegram:', error);
+            console.error('Ошибка отправки:', error);
+            return false;
         }
+    }
+
+    submitBtn.addEventListener('click', async function() {
+        // Собираем данные из формы
+        const surname = document.getElementById('surname').value.trim();
+        const name = document.getElementById('name').value.trim();
+        const patronymic = document.getElementById('patronymic').value.trim();
+        
+        const gender = document.querySelector('input[name="gender"]:checked');
+        const genderValue = gender ? gender.value : 'не указан';
+        
+        const department = document.getElementById('department').value;
+        
+        const zachets = [];
+        document.querySelectorAll('input[name^="zachet"]:checked').forEach(cb => {
+            zachets.push(cb.value);
+        });
+        
+        const mathGrade = document.getElementById('math_grade').value;
+        const physicsGrade = document.getElementById('physics_grade').value;
+        const progGrade = document.getElementById('prog_grade').value;
+        const comment = document.getElementById('comment').value.trim();
+        
+        // Проверка обязательных полей
+        if (!surname || !name) {
+            alert('Пожалуйста, заполните фамилию и имя');
+            return;
+        }
+        
+        // Формируем красивое сообщение для Telegram
+        let message = '<b>📝 НОВАЯ АНКЕТА С САЙТА</b>\n\n';
+        message += `👤 <b>ФИО:</b> ${surname} ${name} ${patronymic || '—'}\n`;
+        message += `⚥ <b>Пол:</b> ${genderValue}\n`;
+        message += `🏫 <b>Отделение:</b> ${department}\n`;
+        message += `✅ <b>Зачёты сданы:</b> ${zachets.length ? zachets.join(', ') : 'нет'}\n`;
+        message += `📊 <b>Оценки:</b>\n`;
+        message += `   • Математика: ${mathGrade}\n`;
+        message += `   • Физика: ${physicsGrade}\n`;
+        message += `   • Программирование: ${progGrade}\n`;
+        if (comment) message += `\n💬 <b>Комментарий:</b>\n${comment}\n`;
+        message += `\n🕐 <i>${new Date().toLocaleString()}</i>`;
+        
+        // Сохраняем в localStorage
+        const formData = {
+            surname, name, patronymic, gender: genderValue, department,
+            zachets, math_grade: mathGrade, physics_grade: physicsGrade,
+            prog_grade: progGrade, comment: comment || 'без комментария',
+            date: new Date().toLocaleString()
+        };
+        localStorage.setItem('anketaData', JSON.stringify(formData));
+        
+        // Отправляем в Telegram
+        const sent = await sendToTelegram(message);
+        
+        if (sent) {
+            alert('Анкета успешно отправлена в Telegram! Переход на главную страницу.');
+        } else {
+            alert('Анкета сохранена локально, но не отправлена в Telegram. Проверьте подключение к интернету.\nПереход на главную страницу.');
+        }
+        
+        // Переход на главную страницу
+        window.location.href = 'index.html';
+    });
+</script>
+</body>
+</html> <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Техно Мир | Контакты</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+<div class="form-container">
+    <h1>Свяжитесь с нами</h1>
+
+    <div class="nav-links" style="display: flex; justify-content: center; gap: 30px; margin-bottom: 30px;">
+        <a href="index.html">Главная</a>
+        <a href="page2.html">Галерея</a>
+        <a href="page3.html">Контакты</a>
+    </div>
+
+    <form id="contactForm">
+        <div class="form-group">
+            <label>Фамилия</label>
+            <input type="text" name="surname" id="surname" required>
+        </div>
+        <div class="form-group">
+            <label>Имя</label>
+            <input type="text" name="name" id="name" required>
+        </div>
+        <div class="form-group">
+            <label>Отчество</label>
+            <input type="text" name="patronymic" id="patronymic">
+        </div>
+
+        <fieldset>
+            <legend>Пол</legend>
+            <div class="radio-group">
+                <label><input type="radio" name="gender" value="Мужской"> Мужской</label>
+                <label><input type="radio" name="gender" value="Женский"> Женский</label>
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            <label>Форма обучения</label>
+            <select name="department" id="department">
+                <option>Очное</option>
+                <option>Заочное</option>
+            </select>
+        </div>
+
+        <fieldset>
+            <legend>Сданные зачёты</legend>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="zachet1" value="Математика"> Математика</label>
+                <label><input type="checkbox" name="zachet2" value="Физика"> Физика</label>
+                <label><input type="checkbox" name="zachet3" value="Программирование"> Программирование</label>
+            </div>
+        </fieldset>
+
+        <div class="grade-select">
+            <p><strong>Оценки по предметам</strong></p>
+            <label>Математика: 
+                <select name="math_grade" id="math_grade">
+                    <option>2</option><option>3</option><option>4</option><option selected>5</option>
+                </select>
+            </label><br>
+            <label>Физика: 
+                <select name="physics_grade" id="physics_grade">
+                    <option>2</option><option>3</option><option>4</option><option selected>5</option>
+                </select>
+            </label><br>
+            <label>Программирование: 
+                <select name="prog_grade" id="prog_grade">
+                    <option>2</option><option>3</option><option>4</option><option selected>5</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label>Ваш комментарий</label>
+            <textarea name="comment" id="comment" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: none; font-family: inherit;" placeholder="Напишите ваш отзыв или пожелание..."></textarea>
+        </div>
+
+        <button class="submit-btn" type="button" id="submitBtn">Отправить анкету</button>
+        <button class="reset-btn" type="reset">Очистить</button>
+    </form>
+
+    <a class="back-link" href="index.html">← На главную</a>
+</div>
+
+<script>
+    // ВАШИ ДАННЫЕ ДЛЯ TELEGRAM
+    const BOT_TOKEN = '8793992470:AAGuIhgSKW1LAxZdLRZVOlxdZEXggow5MWc';
+    const CHAT_ID = '818159509';
+    
+    const submitBtn = document.getElementById('submitBtn');
+
+    async function sendToTelegram(message) {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            });
+            const result = await response.json();
+            return result.ok === true;
+        } catch (error) {
+            console.error('Ошибка отправки:', error);
+            return false;
+        }
+    }
+
+    submitBtn.addEventListener('click', async function() {
+        // Собираем данные из формы
+        const surname = document.getElementById('surname').value.trim();
+        const name = document.getElementById('name').value.trim();
+        const patronymic = document.getElementById('patronymic').value.trim();
+        
+        const gender = document.querySelector('input[name="gender"]:checked');
+        const genderValue = gender ? gender.value : 'не указан';
+        
+        const department = document.getElementById('department').value;
+        
+        const zachets = [];
+        document.querySelectorAll('input[name^="zachet"]:checked').forEach(cb => {
+            zachets.push(cb.value);
+        });
+        
+        const mathGrade = document.getElementById('math_grade').value;
+        const physicsGrade = document.getElementById('physics_grade').value;
+        const progGrade = document.getElementById('prog_grade').value;
+        const comment = document.getElementById('comment').value.trim();
+        
+        // Проверка обязательных полей
+        if (!surname || !name) {
+            alert('Пожалуйста, заполните фамилию и имя');
+            return;
+        }
+        
+        // Формируем красивое сообщение для Telegram
+        let message = '<b>📝 НОВАЯ АНКЕТА С САЙТА</b>\n\n';
+        message += `👤 <b>ФИО:</b> ${surname} ${name} ${patronymic || '—'}\n`;
+        message += `⚥ <b>Пол:</b> ${genderValue}\n`;
+        message += `🏫 <b>Отделение:</b> ${department}\n`;
+        message += `✅ <b>Зачёты сданы:</b> ${zachets.length ? zachets.join(', ') : 'нет'}\n`;
+        message += `📊 <b>Оценки:</b>\n`;
+        message += `   • Математика: ${mathGrade}\n`;
+        message += `   • Физика: ${physicsGrade}\n`;
+        message += `   • Программирование: ${progGrade}\n`;
+        if (comment) message += `\n💬 <b>Комментарий:</b>\n${comment}\n`;
+        message += `\n🕐 <i>${new Date().toLocaleString()}</i>`;
+        
+        // Сохраняем в localStorage
+        const formData = {
+            surname, name, patronymic, gender: genderValue, department,
+            zachets, math_grade: mathGrade, physics_grade: physicsGrade,
+            prog_grade: progGrade, comment: comment || 'без комментария',
+            date: new Date().toLocaleString()
+        };
+        localStorage.setItem('anketaData', JSON.stringify(formData));
+        
+        // Отправляем в Telegram
+        const sent = await sendToTelegram(message);
+        
+        if (sent) {
+            alert('Анкета успешно отправлена в Telegram! Переход на главную страницу.');
+        } else {
+            alert('Анкета сохранена локально, но не отправлена в Telegram. Проверьте подключение к интернету.\nПереход на главную страницу.');
+        }
+        
+        // Переход на главную страницу
+        window.location.href = 'index.html';
     });
 </script>
 </body>
