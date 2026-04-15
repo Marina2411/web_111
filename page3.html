@@ -88,26 +88,10 @@
 <script>
     const submitBtn = document.getElementById('submitBtn');
 
-    submitBtn.addEventListener('click', function() {
+    submitBtn.addEventListener('click', function(e) {
         // Собираем данные из формы
         const surname = document.getElementById('surname').value.trim();
         const name = document.getElementById('name').value.trim();
-        const patronymic = document.getElementById('patronymic').value.trim();
-        
-        const gender = document.querySelector('input[name="gender"]:checked');
-        const genderValue = gender ? gender.value : 'не указан';
-        
-        const department = document.getElementById('department').value;
-        
-        const zachets = [];
-        document.querySelectorAll('input[name^="zachet"]:checked').forEach(cb => {
-            zachets.push(cb.value);
-        });
-        
-        const mathGrade = document.getElementById('math_grade').value;
-        const physicsGrade = document.getElementById('physics_grade').value;
-        const progGrade = document.getElementById('prog_grade').value;
-        const comment = document.getElementById('comment').value.trim();
         
         // Проверка обязательных полей
         if (!surname || !name) {
@@ -115,20 +99,8 @@
             return;
         }
         
-        // Сохраняем данные в localStorage (для имитации отправки)
-        const formData = {
-            surname, name, patronymic, gender: genderValue, department,
-            zachets, math_grade: mathGrade, physics_grade: physicsGrade,
-            prog_grade: progGrade, comment: comment || 'без комментария',
-            date: new Date().toLocaleString()
-        };
-        localStorage.setItem('anketaData', JSON.stringify(formData));
-        
-        // Показываем сообщение об успешной отправке
-        alert('Анкета успешно отправлена! Спасибо за обращение.');
-        
-        // Переход на главную страницу
-        window.location.href = 'index.html';
+        // Моментальный переход на главную страницу
+        window.location.replace('index.html');
     });
 </script>
 </body>
