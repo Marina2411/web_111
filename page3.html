@@ -85,23 +85,6 @@
     <a class="back-link" href="index.html">← На главную</a>
 </div>
 
-<script>
-    const submitBtn = document.getElementById('submitBtn');
 
-    submitBtn.addEventListener('click', function(e) {
-        // Собираем данные из формы
-        const surname = document.getElementById('surname').value.trim();
-        const name = document.getElementById('name').value.trim();
-        
-        // Проверка обязательных полей
-        if (!surname || !name) {
-            alert('Пожалуйста, заполните фамилию и имя');
-            return;
-        }
-        
-        // Моментальный переход на главную страницу
-        window.location.replace('index.html');
-    });
-</script>
 </body>
 </html>
